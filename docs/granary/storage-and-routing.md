@@ -11,9 +11,9 @@
 - DXN is staked permanently in DBXen; NXD in NXD's staking vault.
 - DXN earned by the Granary's own winter burns is staked in DBXen too.
 
-## Energy fee and escrow
+## Energy fee and the small reserve
 
-Every XEN deposit pays an energy fee, the same formula as a DBXen burn. The fee goes **100% to escrow** until the escrow holds **1.2× the DBXen fee needed to burn the whole store**. The surplus buys XEN on the market and stakes it. This guarantees that the winter burns can always be paid, whatever gas costs after the floor.
+Every XEN deposit pays an energy fee, the same formula as a DBXen burn. It funds a **small ETH reserve** (escrow). The reserve does not pay for every release: callers pay the DBXen fee through the [Hearth-lighting auction](lighting-the-hearth.md), and the reserve only pays for lots the auction leaves unsold. Above its target size, the surplus buys XEN on the market and stakes it. Because the reserve pays only what the market won't, nobody has to guess what gas will cost years from now; in the synthetic test it lasted to the horizon in 83–94% of runs, against 65% for an escrow paying every burn.
 
 ## Income routing
 

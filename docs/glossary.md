@@ -14,14 +14,21 @@
 | **Glow** | The game power of a Granary deposit; halves every 30 days. |
 | **Granary** | The NXN protocol contract that stores XEN now and burns it into DBXen after the floor. The Hearth in the game. |
 | **Half-Light** | 16 Nov 2026, the day AMP crosses 1,500, half of its starting value. The pre-season. |
-| **Heat index (H)** | How hard the map is: 1 + ln(3000 / AMP) before the floor, then tied to net XEN supply. |
+| **Climate (C)** | The slow, structural cold: 1 + ½·ln(3000 / AMP) + ½·ln(10,000 / R). |
+| **Heat** | How hard the map is: climate × 2^(−weather). |
 | **Hearth** | The fire at the centre of the map; shows the real Granary store. |
+| **Keeper of the Hearth** | The tribe whose member lit the Hearth that cycle. |
+| **Lighting the Hearth** | The rising-share auction in which anyone pays the DBXen fee to burn the Granary's release allowance and keeps part of the DXN. |
+| **Realm** | One chain's world in the game, with its own AMP clock, map and climate. |
+| **Reserve** | The Granary's small ETH reserve (escrow) that pays for release lots the auction leaves unsold. |
 | **NXN** | The closure token, minted only by Granary deposits and burned by the game. |
 | **Oath** | An active XEN mint term, the source of oath power. |
 | **Outlaw** | A player in no tribe: mercenary, raider of the cold, free rescuer. |
+| **Forged item** | A cosmetic item made by burning XEN through DBXen with a creator's recipe. |
 | **Rescue** | Alerting a mint owner before the late-claim penalty bites. |
 | **Reaping** | The last 10 days of each season: an arena of tributes with sponsor crates. |
 | **Sponsor crate** | In-game help for a tribute, bought by burning XEN in any temple or burning 1 NXN. |
 | **Temple** | Any burner contract that calls XEN's `burn()`. |
 | **Territory share** | 40% of NXN emission, paid to tribes by the yield of the hexes they hold. |
 | **War-burn** | A burn a tribe calls on a named DBXen cycle to win a hex; members keep their DXN. |
+| **Weather (w)** | Fast, cyclical activity: short vs long averages of burns per DXN, births and NXD burns, between −1 and +1. Winter is w < 0. |

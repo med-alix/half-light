@@ -15,13 +15,14 @@
 | Client | Next.js with a hex-map canvas, the sky view and tribe pages; wagmi/viem; sign-in with Ethereum |
 | 3D world | Browser three.js client on the same data (presence only) |
 | Honours | Soulbound badges off-chain first; an optional audited non-transferable ERC-721 later |
-| Protocol contracts | NXN, Granary, XenVault clones, Escrow (see [The NXN protocol](../granary/README.md)) |
+| Protocol contracts | NXN, Granary (with the Hearth-lighting auction), XenVault clones, small reserve, tribe registry (see [The NXN protocol](../granary/README.md)) |
 
 ## Indexing rules
 
 - Settle a turn only on blocks at least 64 deep (two Ethereum epochs) to avoid reorg flips.
 - Store raw logs append-only; derive everything from them.
-- Phase 1 indexes Ethereum mainnet only. Other XEN chains come later as separate realms (which chains, and whether tribes can span them, is open).
+- Phase 1 indexes Ethereum mainnet only. Other XEN chains come later as separate [realms](../game/realms.md), one at a time, each with its own map and climate; tribes span realms as houses, and results combine in the indexer, never through a bridge.
+- Content packs (regions, items, characters) are data checked against a published schema; the engine ignores what it doesn't understand (see [The living world](../game/living-world.md)).
 
 ## Releases
 

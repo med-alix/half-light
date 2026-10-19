@@ -5,15 +5,15 @@
 ## The map
 
 - **37 hexes:** the Hearth plus 36 provinces in three rings.
-- **Warmth threshold** of a hex: **θ = θ₀ × (1 + ring) × H**, with θ₀ = 10.
+- **Warmth threshold** of a hex: **θ = θ₀ × (1 + ring) × Heat**, with θ₀ = 10.
 - **Yield** per hex: 1 in the inner ring, 2 in the middle, 3 in the outer ring. Outer hexes pay more and cost more to hold.
 - A hex below θ for **3 consecutive dusks** freezes and becomes neutral wasteland.
 
-## The heat index
+## Heat: climate and weather
 
-**H = 1 + ln(3000 / AMP)** until the floor: about 1.67 today, 9.0 at the floor. It rises slowly, so the map gets harder as the sun cools without breaking the log-scaled power below.
+**Heat = C × 2^(−w)**. The climate C = 1 + ½·ln(3000 / AMP) + ½·ln(10,000 / R) follows AMP and DXN disinflation (about 2.5 today, 7–8 at the floor); the weather w follows current activity and makes the map up to 2× harder in a blizzard or easier in a thaw. See [Climate and weather](climate-and-weather.md).
 
-After the floor the heat follows **net XEN supply**: H = 9 × S(floor) / S(t). Net deflation makes the world colder, net inflation eases it. In the Long Fire, the **habitable radius** is set by the Granary store relative to its size at the floor: the world is as big as its stores.
+After the floor the climate keeps cooling through DXN disinflation, only on cycles with burns. In the Long Fire, the **habitable radius** is set by the Granary store relative to its size at the floor: the world is as big as its stores.
 
 ## Player power
 

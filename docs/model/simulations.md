@@ -45,11 +45,35 @@ The code is in the `sim/` folder at the root of the repository. Change the range
 
 ## Season simulator
 
-The game simulator (`sim/game/half-light-simulator.html`, open it in a browser) plays seasons on the 37-hex map with AI tribes and lets you play as one. First findings: the Hearth-feeding tribe won 5 of 6 seasons (hence the Warden limits), and the Long Fire world at H = 9 is nearly empty.
+The game simulator (`sim/game/half-light-simulator.html`, open it in a browser) plays seasons on the 37-hex map with AI tribes and lets you play as one. First findings: the Hearth-feeding tribe won 5 of 6 seasons (hence the Warden limits), and the Long Fire world at maximum heat is nearly empty.
+
+## Release controller and the Hearth-lighting auction (synthetic test)
+
+`sim/hearth_controller_test.py` tests the [release rule](../granary/release.md) and the [auction](../granary/lighting-the-hearth.md) with **no market data**: 120 synthetic worlds with bull and bear cycles, gas regimes and burn noise, run from March 2027 to 2040. Protocol rules (DXN emission decay, 2% stake yield, the AMP floor date) are exact. Each world is run twice: once where the ETH fee is most of a burn's cost (XEN cheap) and once where XEN is most of it.
+
+![One synthetic world](../assets/charts/hearth-controller-example.png)
+
+| Setup | Post-floor burns vs no Granary | Worst 90 days | DXN the Granary keeps | Store left unspent at horizon | Speeds DXN decay |
+| --- | --- | --- | --- | --- | --- |
+| Fixed rule, escrow sized at deposit-time gas | +41% | ~9× | 100% | in 35% of runs | Yes |
+| Auction only, fee is most of the cost | +8% | 1× | 26% | in ~100% of runs | No |
+| Auction only, XEN is most of the cost | +28% | ~1× | 65% | in 82% of runs | No |
+| **Hybrid (auction first, small reserve for the rest)** | **+57%** | **~9–10×** | **~70%** | **in 6–17% of runs** | **No** |
+
+Other findings:
+
+- **Deposits were never touched before the floor**, in any run.
+- **Tribe prestige** (Keeper of the Hearth) raised the Granary's kept share by about 12 points.
+- **A closed tribe cartel** cut the kept share to about 10%; **open access** (Outlaws and bots can light) restored it fully.
+- **Releasing on quiet cycles** made results worse, because it speeds DXN decay. The active-cycle rule stays.
+- **Weather must use burns per DXN emitted.** Raw burns read as winter about 70% of the time (mean w ≈ −0.35); burns per DXN give a mean of about zero.
+
+Caveats: synthetic worlds, not forecasts. The fee share of a burn's cost is the biggest unknown, which is why both cases were run. The reserve size (1.2× the fee at deposit-time gas) and the prestige value (10–20% of a lot) are guesses. The game's own extra burns are not included.
 
 ## Still to simulate
 
-- Responsive release vs the fixed 8-year rule, with floor minting included
+- Replay past DBXen bear markets with the hybrid rule
+- Size of the small reserve and the auction range
 - Half-burn deposits
 - DXN and NXD deposits: hard 10% cap vs no cap vs taper
 - Warden limits, Outlaws, and the 60/40 emission split against the balance targets

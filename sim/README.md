@@ -21,6 +21,8 @@ pip install numpy matplotlib
 | `release_rule.py` | Release rule comparisons |
 | `game_scoring.py` | Tribe scoring checks (plain sum vs quadratic, concentration) |
 | `*.json` | Saved results of the runs above |
+| `hearth_controller_test.py` | Synthetic test of the release rule and the Hearth-lighting auction: fixed rule vs auction vs hybrid, tribes, cartels |
+| `hearth_controller_chart.py` | Chart of one synthetic world (`hearth_controller_example.png`) |
 | `game/half-light-simulator.html` | Season simulator: open in a browser, play as one tribe against AI tribes |
 
 ## Change the assumptions

@@ -31,4 +31,6 @@ The world is a ring of 37 hexes around **the Hearth**, the great fire at the cen
 - [World systems](systems.md): lineage, dying stars, temples, the Core
 - [The three eras](eras.md): Creation, Twilight, Long Fire
 - [The world and its art](world-and-art.md): the 3D layer and art direction
+- [The living world](living-world.md): items, stores and content anyone can add
+- [Realms](realms.md): one realm per chain, each with its own sun
 - [Anti-exploit](anti-exploit.md): sybils, whales, bots

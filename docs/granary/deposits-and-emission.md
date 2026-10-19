@@ -45,4 +45,4 @@ The Granary is unlikely to compound its way to dominance in DXN staking: it re-s
 
 ## The game sink
 
-The game burns NXN as fuel. Target: on average **0.05 NXN per active player per day × the heat index H**. Prices adjust each season (see [Winning, losing and NXN](../game/winning-and-nxn.md)).
+The game burns NXN as fuel. Target: on average **0.05 NXN per active player per day × the heat**. Prices adjust each season (see [Winning, losing and NXN](../game/winning-and-nxn.md)).

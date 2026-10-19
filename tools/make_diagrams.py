@@ -235,9 +235,53 @@ for i, (t, c) in enumerate([("Embers home sector", EMBER), ("Wardens home sector
     y = 390 + i * 30
     s.add(f'<rect x="{lx - 30}" y="{y - 13}" width="18" height="18" rx="3" fill="{c}" fill-opacity="0.6"/>')
     s.text(lx, y, t, 13, TXT, anchor="start")
-s.text(lx - 30, 500, "θ₀ = 10 · H = heat index", 12, MUTED, anchor="start")
+s.text(lx - 30, 500, "θ₀ = 10 · H = heat (climate × weather)", 12, MUTED, anchor="start")
 s.text(lx - 30, 520, "A hex below θ for 3 dusks freezes.", 12, MUTED, anchor="start")
 s.save("hex-map.svg")
+
+# 8. Climate and weather signals ----------------------------------------------
+s = SVG(1000, 520, "On-chain signals: climate and weather")
+s.text(500, 44, "Climate and weather: five on-chain signals", 22, TXT, font=SERIF)
+sig = [("AMP", "the sun · structural", HEARTH), ("DXN reward R", "forge disinflation", HEARTH),
+       ("Burns per DXN", "forge crowding · activity", ICE), ("New ranks / day", "births · growth", ICE),
+       ("NXD burned", "the Core's pulse", ICE)]
+for i, (t, sub, col) in enumerate(sig):
+    s.box(60, 80 + i * 80, 230, 60, t, sub, col, tsize=15)
+s.box(390, 110, 240, 80, "Climate C", "slow: 1 + ½ln(3000/A) + ½ln(10⁴/R)", HEARTH)
+s.box(390, 300, 240, 80, "Weather w", "fast: ln(short ÷ long), mean 0", ICE)
+s.box(730, 110, 210, 80, "Game heat", "C × 2^(−w)", EMBER)
+s.box(730, 300, 210, 80, "Granary release", "fills dips (burn signal only)", WARDEN)
+s.arrow([(290, 110), (340, 110), (340, 140), (386, 140)], HEARTH)
+s.arrow([(290, 190), (340, 190), (340, 160), (386, 160)], HEARTH)
+s.arrow([(290, 270), (340, 270), (340, 325), (386, 325)])
+s.arrow([(290, 350), (386, 350)])
+s.arrow([(290, 430), (340, 430), (340, 365), (386, 365)])
+s.arrow([(630, 150), (726, 150)], HEARTH)
+s.arrow([(630, 320), (680, 320), (680, 170), (726, 170)])
+s.arrow([(630, 350), (726, 350)], WARDEN)
+s.text(500, 488, "Only costly signals (burns) move money. Cheap ones (rank claims, NXD pulse) only change the game's mood.", 13, MUTED)
+s.save("signals.svg")
+
+# 9. Hybrid release ------------------------------------------------------------------
+s = SVG(1000, 560, "Hybrid release: allowance, Hearth-lighting auction, small reserve")
+s.text(500, 44, "Hybrid release: the market lights the Hearth, a small reserve covers the rest", 20, TXT, font=SERIF)
+s.box(60, 90, 260, 80, "Allowance this cycle", "½·gap (any era) + annuity (after floor)", WARDEN)
+s.box(370, 90, 260, 80, "Hearth-lighting auction", "caller share rises 10% → 100% in 24 h", HEARTH)
+s.box(680, 90, 260, 80, "Caller", "pays DBXen fee, keeps its share of DXN", OUTLAW)
+s.box(370, 260, 260, 80, "Unsold lots", "auction found no taker today", LINE)
+s.box(60, 260, 260, 80, "Small reserve (escrow)", "ETH from deposit energy fees", ICE)
+s.box(370, 430, 260, 80, "DBXen burn", "only on cycles others also burn", EMBER)
+s.arrow([(320, 130), (366, 130)], WARDEN)
+s.arrow([(630, 130), (676, 130)], HEARTH)
+s.arrow([(500, 170), (500, 256)], MUTED)
+s.arrow([(366, 300), (324, 300)], MUTED)
+s.arrow([(190, 340), (190, 470), (366, 470)], ICE)
+s.arrow([(810, 170), (810, 470), (634, 470)], OUTLAW)
+s.text(830, 330, "3 lots per cycle", 12.5, MUTED, anchor="start")
+s.text(205, 400, "pays only what", 12.5, MUTED, anchor="start")
+s.text(205, 418, "the market won't", 12.5, MUTED, anchor="start")
+s.text(500, 540, "Before the floor only stake yield can be released; deposits are untouchable. Unsold allowance carries over up to 7 cycles.", 12.5, MUTED)
+s.save("release-controller.svg")
 
 print("diagrams ok")
 
@@ -265,20 +309,6 @@ ax.set_ylabel("relative to today"); ax.set_ylim(0, 1.02)
 ax.set_title("DBXen after the floor: emission falls ~20×; burns fall by (1/20)^ε", color=TXT, loc="left", fontsize=12.5)
 ax.legend(loc="upper right", fontsize=9.5)
 fig.tight_layout(); fig.savefig(os.path.join(OUT, "dxn-emission.svg")); plt.close(fig)
-
-# Responsive release
-fig, ax = plt.subplots(figsize=(9, 4.2))
-ratio = np.linspace(0.05, 2.5, 400)
-for g, c in [(0, MUTED), (0.5, WARDEN), (1.0, HEARTH)]:
-    m = np.clip((1 / ratio) ** g, 0.25, 4)
-    ax.plot(ratio, m, color=c, lw=2.2, label=f"γ = {g}" + ("  (fixed rule)" if g == 0 else ""))
-ax.axvline(1, color=LINE, lw=1, ls=":")
-ax.set_xlabel("market burns ÷ target  (B̄ / B*)"); ax.set_ylabel("release multiplier m")
-ax.set_title("Responsive release: Rel = (store / τ) × clip((B*/B̄)^γ, 0.25, 4)", color=TXT, loc="left", fontsize=12.5)
-from matplotlib.ticker import NullFormatter
-ax.set_yscale("log"); ax.yaxis.set_minor_formatter(NullFormatter()); ax.set_yticks([0.25, 0.5, 1, 2, 4]); ax.set_yticklabels(["0.25", "0.5", "1", "2", "4"])
-ax.legend(fontsize=10)
-fig.tight_layout(); fig.savefig(os.path.join(OUT, "release-controller.svg")); plt.close(fig)
 
 # XEN reward per mint vs AMP
 fig, ax = plt.subplots(figsize=(9, 4.2))

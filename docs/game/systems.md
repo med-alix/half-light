@@ -15,7 +15,7 @@ Eight systems, each driven by one protocol rule. The first three are the minimum
 
 ## 1. The Cooling
 
-Concentric rings of hexes around the Hearth. The habitable map shrinks with the heat index, a battle-royale circle driven by a real on-chain clock. See [The map and power](the-map-and-power.md).
+Concentric rings of hexes around the Hearth. The habitable map shrinks as the climate cools, a battle-royale circle driven by a real on-chain clock. See [The map and power](the-map-and-power.md).
 
 ## 2. Lineage and castes
 

@@ -18,6 +18,7 @@
 * [Deposits and emission](granary/deposits-and-emission.md)
 * [Storage and routing](granary/storage-and-routing.md)
 * [Release](granary/release.md)
+* [Lighting the Hearth](granary/lighting-the-hearth.md)
 * [Launch gates](granary/launch-gates.md)
 
 ## The game
@@ -25,12 +26,15 @@
 * [Overview](game/README.md)
 * [The tribes](game/tribes.md)
 * [Days and seasons](game/days-and-seasons.md)
+* [Climate and weather](game/climate-and-weather.md)
 * [The map and power](game/the-map-and-power.md)
 * [The Reaping](game/the-reaping.md)
 * [Winning, losing and NXN](game/winning-and-nxn.md)
 * [World systems](game/systems.md)
 * [The three eras](game/eras.md)
 * [The world and its art](game/world-and-art.md)
+* [The living world](game/living-world.md)
+* [Realms](game/realms.md)
 * [Anti-exploit](game/anti-exploit.md)
 
 ## The model

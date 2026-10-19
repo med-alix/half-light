@@ -2,9 +2,11 @@
 
 | Era | XEN days | Dates (approx.) | What drives the world | What changes |
 | --- | --- | --- | --- | --- |
-| **Creation** | now → 2,999 | now → 24 Dec 2030 | AMP cooling; mints, burns, stakes | The map shrinks with the heat index; oaths carry most power; the dawn line is a live world event; tribes fill the Granary |
+| **Creation** | now → 2,999 | now → 24 Dec 2030 | AMP cooling; mints, burns, stakes | The map shrinks as the climate cools; oaths carry most power; the dawn line is a live world event; tribes fill the Granary |
 | **Twilight** | 2,999 → ~3,470 | 24 Dec 2030 → ~Apr 2032 | The last AMP > 1 stars maturing; the Granary opens | Last-star rescues; oath power fades; stake and deposit weight rise; the map stops shrinking with AMP |
-| **Long Fire** | ~3,470 onward | ~Apr 2032 onward | Net XEN supply; the Granary store | Heat follows net supply; the habitable radius follows the store; power comes from fire (burns) and keeping (stakes); Drifters become floor miners and traders |
+| **Long Fire** | ~3,470 onward | ~Apr 2032 onward | DXN disinflation; the Granary store | The climate cools with the forge; the habitable radius follows the store; power comes from fire (burns) and keeping (stakes); Drifters become floor miners and traders |
+
+Eras follow the slow climate. Weather (bull and bear markets) comes and goes inside every era: a frost can hit in 2027 as easily as in 2033. See [Climate and weather](climate-and-weather.md).
 
 ## Creation
 

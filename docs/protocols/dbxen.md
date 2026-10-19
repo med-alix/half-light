@@ -2,6 +2,10 @@
 
 DBXen turns XEN burns into DXN.
 
+> **DBXen v2.** The original DBXen was exploited in March 2026 (on BNB Chain, through a mix-up between the ERC-2771 forwarder and the real sender in `burnBatch`). Its developer, Ruan, released **DBXen v2** as the new protocol, and holders of the original were offered a migration whose window has now closed. Some holders could not migrate after the price fell. **HALF-LIGHT and the Granary build on DBXen v2.**
+>
+> DBXen v2 keeps the same rules as the original, with the exploit removed. The rules below apply to v2.
+
 ## Rules
 
 - Burns happen in **batches of 2.5M XEN**, 1 to 10,000 batches per transaction.

@@ -27,7 +27,7 @@ If Wardens grow too strong, attacking gets expensive, demand for NXN rises, and 
 | Hearth Council banner | 10 NXN per season | Season winners only |
 | Mercenary bounty | Set by the hiring tribe | 10% burned |
 
-**Price rule.** Target: players burn on average 0.05 NXN per active player per day × H. At each season start, every price is multiplied by **(target ÷ actual)^0.5**, at most ±25%. The rule is published and applied by formula, not by an operator.
+**Price rule.** Target: players burn on average 0.05 NXN per active player per day × the heat. At each season start, every price is multiplied by **(target ÷ actual)^0.5**, at most ±25%. The rule is published and applied by formula, not by an operator.
 
 **Rescue tithe.** When a rescued star is claimed, the owner is offered a one-click deposit of 10% of the reward into the Granary. They receive NXN for it; the rescuing tribe gets the prestige.
 

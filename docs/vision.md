@@ -17,7 +17,7 @@ The name comes from the calendar. On **16 November 2026**, AMP crosses 1,500: th
 | Zero extra cost alignment | The core actions are protocol actions holders already take: mint, claim, burn, stake. The game gives them meaning and coordination. |
 | Self-custody, no house | The game never holds assets or runs a pot. Rewards are protocol-native or non-financial (titles, territory, cosmetics), plus NXN emission that already exists. |
 | The hierarchy is the map | XEN is the surface, burners are the temples, DBXen is the forge, NXD is the core, Fenix is rebirth, the Granary is the Hearth. |
-| Open by design | The rules engine is open source and deterministic. Anyone can recompute the game from chain events. Content is data, so contributors and AI tools can add regions, lore and art without touching the rules. |
+| Open by design | The rules engine is open source and deterministic. Anyone can recompute the game from chain events. Content is data, so contributors and AI tools can add regions, items, stores, lore and art without touching the rules (see [The living world](game/living-world.md)). |
 
 ## What it brings to each protocol
 

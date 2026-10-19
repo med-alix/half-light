@@ -6,6 +6,10 @@ XEN's amplifier (AMP) starts at 3,000 at genesis (8 October 2022) and falls by 1
 
 ![XEN's clock](assets/diagrams/calendar.svg)
 
+## Why start now
+
+The ecosystem is in a real winter today. After the March 2026 exploit, DBXen moved to v2; some holders could not migrate, prices fell hard, and DBXen v2 is small. Yet it is growing organically, with active daily burns and decent payouts. That makes now the right time to establish the game: a world built for winters should be born in one, with a small community that can shape it, rather than launched into a boom it would only amplify.
+
 ## What happens at the floor
 
 - **Minting pays about 1,500× less than today.** A max-term mint pays about 14 million XEN today and about 9,400 at the floor (see [XEN](protocols/xen.md)).
@@ -26,6 +30,17 @@ Every layer rewards one verb:
 | NXD | compounding DBXen fees |
 
 Nobody is rewarded for **keeping XEN for the winter**, when DBXen needs burns most and new XEN is scarce. Without that, simulations put DBXen's burn flow after the floor at about **5–7% of today**, with long stretches of near-silent cycles.
+
+## Two kinds of winter
+
+The floor is the winter whose date we know, but it is not the only one. Any bear market is a winter too: burns drop, DBXen cycles go quiet, people leave.
+
+| Winter | Cause | When |
+| --- | --- | --- |
+| Cyclical | Bear markets, quiet months | Any time |
+| Structural | AMP reaches 1, DXN emission small | From ~24 Dec 2030 |
+
+The Granary and the game respond to both: the Granary fills dips in burn activity in any era (before the floor only from its yield), and the game's weather makes burning in a frost worth more. See [Release](granary/release.md) and [Climate and weather](game/climate-and-weather.md).
 
 ## The answer, in two parts
 

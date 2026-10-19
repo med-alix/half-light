@@ -6,7 +6,7 @@ The game runs on XEN's own clock.
 
 ## One day = one turn = one DBXen cycle
 
-1. **Dawn.** The indexer settles yesterday's chain events: mints, claims, burns per temple, stakes started or broken, Granary deposits. The sun cools by one degree. The chronicle reports which hexes froze, which changed hands, whose stars were rescued, and how full the Granary is.
+1. **Dawn.** The indexer settles yesterday's chain events: mints, claims, burns per temple, stakes started or broken, Granary deposits. The sun cools by one degree and the weather is read (thaw, fair, frost or blizzard). The chronicle reports which hexes froze, which changed hands, whose stars were rescued, and how full the Granary is.
 2. **Council.** Tribe officers propose moves: hold the river hex in ring 2, raid the Wardens' outer flank, call a war-burn for cycle N+2, hire Outlaws. Members vote in the tribe channel.
 3. **Action.** You act from your own wallet: claim a matured mint, burn in DBXen on the war-burn day, deposit to the Granary, or spend NXN as emergency fuel. Free actions: scouting, alerts, diplomacy.
 4. **Dusk.** Warmth is summed per hex. Contested hexes go to the warmer tribe. Cold hexes lose a turn of life; after 3 cold dusks a hex freezes.
