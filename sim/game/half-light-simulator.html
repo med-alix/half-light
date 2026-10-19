@@ -1,0 +1,603 @@
+<title>HALF-LIGHT Simulator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: night-sky command table. Header strip of controls, map on the left, tribes and council on the right, chronicle and season signals below. Single dark world by design. */
+:root{
+  --ground:#0e121b; --panel:#151b28; --panel-2:#1b2333; --line:#2a3447;
+  --ink:#e9e4d8; --ink-2:#a9b0bf; --ink-3:#727b8e;
+  --ember:#e8743b; --warden:#3eb3a8; --drifter:#b08ce6;
+  --hearth:#f3c552; --ice:#8fa9bf; --dead:#232b3a; --neutral:#2c3547;
+  --good:#6cc28a; --warn:#e7b24a; --bad:#e2675d;
+  --f-display:"Marcellus SC", "Trajan Pro", Georgia, serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--ground);color:var(--ink)}
+body{font-family:var(--f-body);font-size:14px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px}
+.wrap{max-width:1280px;margin:0 auto;display:grid;gap:16px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;letter-spacing:.04em;text-wrap:balance}
+h1{font-size:26px}
+h2{font-size:16px;color:var(--ink)}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+header{display:grid;gap:12px}
+.titlerow{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;justify-content:space-between}
+.sub{color:var(--ink-2);max-width:70ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.ctl{display:grid;gap:4px;min-width:0}
+.ctl label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+select,input[type=range],input[type=number]{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:inherit}
+input[type=range]{padding:0;accent-color:var(--hearth);width:120px}
+button{font:inherit;font-weight:600;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--hearth);outline-offset:2px}
+button.primary{background:var(--hearth);color:#1b1407;border-color:var(--hearth)}
+button[aria-pressed=true]{background:#2d3850;border-color:var(--hearth)}
+.spacer{flex:1}
+.main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.main,.lower{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
+.mapbox{position:relative}
+#map{width:100%;height:auto;display:block}
+.hex{stroke:var(--ground);stroke-width:2;transition:fill .35s}
+.hex.sel{stroke:var(--hearth);stroke-width:3}
+.hexlabel{font-family:var(--f-mono);font-size:9px;fill:rgba(233,228,216,.55);pointer-events:none}
+.flash{animation:flash .9s ease-out}
+@keyframes flash{0%{stroke:#fff;stroke-width:4}100%{stroke:var(--ground);stroke-width:2}}
+@media (prefers-reduced-motion:reduce){.flash{animation:none}.hex{transition:none}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink-2)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.daybar{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.stat{display:grid;gap:0}
+.stat .v{font-family:var(--f-mono);font-size:18px;font-variant-numeric:tabular-nums}
+.stat .k{font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
+.phase{display:flex;gap:4px}
+.phase span{font-size:11px;padding:3px 8px;border-radius:999px;background:var(--panel-2);color:var(--ink-3);border:1px solid var(--line)}
+.phase span.on{color:#1b1407;background:var(--hearth);border-color:var(--hearth)}
+.tribes{display:grid;gap:8px}
+.tribe{display:grid;grid-template-columns:6px minmax(0,1fr);gap:10px;background:var(--panel-2);border-radius:8px;padding:10px 10px 10px 0;border:1px solid var(--line)}
+.tribe .stripe{border-radius:8px 0 0 8px}
+.tribe .head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tribe .name{font-family:var(--f-display);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2)}
+.chip.warn{color:var(--warn);border-color:rgba(231,178,74,.5)}
+.chip.bad{color:var(--bad);border-color:rgba(226,103,93,.5)}
+.chip.good{color:var(--good);border-color:rgba(108,194,138,.5)}
+.nums{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.nums div{display:grid}
+.nums b{font-family:var(--f-mono);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}
+.nums small{font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+.council{display:grid;gap:8px;border:1px dashed var(--hearth);border-radius:8px;padding:10px}
+.stances{display:flex;flex-wrap:wrap;gap:6px}
+.hint{font-size:12px;color:var(--ink-2)}
+.chron{max-height:340px;overflow:auto;display:grid;gap:4px;font-size:13px;padding-right:4px}
+.chron .e{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px}
+.chron .d{font-family:var(--f-mono);color:var(--ink-3);font-size:12px}
+.chron .e.big{color:var(--hearth)}
+#chart{width:100%;height:auto;display:block}
+.signals{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.sig{background:var(--panel-2);border-radius:8px;padding:8px 10px;border:1px solid var(--line)}
+.sig .v{font-family:var(--f-mono);font-size:18px}
+.sig .k{font-size:11px;color:var(--ink-3)}
+.verdict{display:grid;gap:6px;font-size:13px}
+.verdict div{padding-left:12px;border-left:3px solid var(--line)}
+.verdict .good{border-color:var(--good)}.verdict .warn{border-color:var(--warn)}.verdict .bad{border-color:var(--bad)}
+.reaping{display:grid;gap:8px}
+.trib{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:8px;align-items:center;font-size:13px}
+.hp{height:8px;background:var(--panel-2);border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.hp i{display:block;height:100%}
+.dead{opacity:.4;text-decoration:line-through}
+.tip{position:absolute;pointer-events:none;background:#0b0f17;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;max-width:240px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.banner{background:linear-gradient(90deg,rgba(243,197,82,.16),transparent);border:1px solid rgba(243,197,82,.5);border-radius:10px;padding:12px 14px}
+.note{font-size:12px;color:var(--ink-3)}
+details summary{cursor:pointer;color:var(--ink-2)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="titlerow">
+    <div>
+      <div class="eyebrow">Design sandbox · simulated players, no real chain data</div>
+      <h1>HALF-LIGHT Simulator</h1>
+    </div>
+    <p class="sub">One season of the game, played by simulated players on the rules in the design doc. Watch it, or take one tribe's council and give the orders yourself. Click a hex to see its numbers, or to aim your tribe at it.</p>
+  </div>
+  <div class="controls" role="group" aria-label="Simulation controls">
+    <div class="ctl"><label for="era">Era</label>
+      <select id="era">
+        <option value="half">Half-Light · Nov 2026 (AMP 1500)</option>
+        <option value="late">Late Creation · 2029 (AMP 400)</option>
+        <option value="long">Long Fire · 2033 (AMP 1)</option>
+      </select></div>
+    <div class="ctl"><label for="you">You play</label>
+      <select id="you">
+        <option value="-1">Watch only</option>
+        <option value="0">Embers</option>
+        <option value="1">Wardens</option>
+        <option value="2">Drifters</option>
+      </select></div>
+    <div class="ctl"><label for="ppl">Players per tribe <span class="mono" id="pplv">50</span></label><input id="ppl" type="range" min="15" max="150" step="5" value="50"></div>
+    <div class="ctl"><label for="th">Hex cost θ₀ <span class="mono" id="thv">10</span></label><input id="th" type="range" min="4" max="16" step="1" value="10"></div>
+    <div class="ctl"><label for="seed">Seed</label><input id="seed" type="number" value="7" min="1" max="9999" style="width:80px"></div>
+    <button id="reset">New season</button>
+    <div class="spacer"></div>
+    <div class="ctl"><label for="speed">Speed <span class="mono" id="speedv">3</span> days/s</label><input id="speed" type="range" min="1" max="12" value="3"></div>
+    <button id="step">Next day</button>
+    <button id="play" class="primary">Play</button>
+    <button id="jump">Skip to the Reaping</button>
+  </div>
+</header>
+
+<div class="main">
+  <section class="panel">
+    <div class="daybar">
+      <div class="stat"><span class="v" id="dayv">Day 0</span><span class="k">of 90 · season 1</span></div>
+      <div class="stat"><span class="v" id="ampv">1500</span><span class="k">Sun (AMP)</span></div>
+      <div class="stat"><span class="v" id="hv">1.69</span><span class="k">Heat index H</span></div>
+      <div class="stat"><span class="v" id="habv">36</span><span class="k">Habitable hexes</span></div>
+      <div class="phase" aria-label="Turn phase"><span id="ph0">Dawn</span><span id="ph1">Council</span><span id="ph2">Action</span><span id="ph3">Dusk</span></div>
+    </div>
+    <div class="mapbox" id="mapbox">
+      <svg id="map" viewBox="-260 -235 520 470" role="img" aria-label="Hex map of the three tribes around the Hearth"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--ember)"></i>Embers</span>
+      <span><i class="sw" style="background:var(--warden)"></i>Wardens</span>
+      <span><i class="sw" style="background:var(--drifter)"></i>Drifters</span>
+      <span><i class="sw" style="background:var(--neutral)"></i>Wild</span>
+      <span><i class="sw" style="background:var(--ice)"></i>Frozen</span>
+      <span><i class="sw" style="background:var(--dead)"></i>Beyond the Hearth's reach</span>
+      <span><i class="sw" style="background:var(--hearth)"></i>Hearth (Granary)</span>
+    </div>
+    <p class="note">Ring 1 hexes cost θ₀·H to keep warm and yield 1 prestige a day; ring 2 costs 2× and yields 2; ring 3 costs 3× and yields 3. Three cold turns and a hex freezes.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Tribes</h2>
+    <div class="tribes" id="tribes"></div>
+    <div class="council" id="council" hidden>
+      <div class="eyebrow">Your council · orders for tomorrow</div>
+      <div class="stances" id="stances" role="group" aria-label="Stance"></div>
+      <div class="hint" id="stancehint"></div>
+      <label class="hint"><input type="checkbox" id="fuel" checked> Spend treasury NXN as emergency fuel (2 warmth per NXN, up to 30% of a hex's need)</label>
+      <label class="hint"><input type="checkbox" id="pauseeach"> Pause every day for my orders</label>
+      <div class="hint" id="target">Target: none. Click a hex on the map to focus your attack.</div>
+      <div id="sponsorbox" hidden><button id="sponsor">Sponsor our tributes (3 crates, burns 3 NXN)</button></div>
+    </div>
+    <div class="reaping" id="reaping" hidden></div>
+    <div id="seasonend" hidden></div>
+  </section>
+</div>
+
+<div class="lower">
+  <section class="panel">
+    <h2>Chronicle</h2>
+    <div class="chron" id="chron" aria-live="polite"></div>
+  </section>
+  <section class="panel">
+    <h2>Season signals</h2>
+    <svg id="chart" viewBox="0 0 520 170" role="img" aria-label="Share of hexes held by each tribe across the season"></svg>
+    <div class="signals" id="signals"></div>
+    <div class="verdict" id="verdict"></div>
+    <details><summary>On-chain activity this season would generate</summary><div class="signals" id="chain" style="margin-top:8px"></div></details>
+  </section>
+</div>
+</div>
+
+<script>
+(() => {
+'use strict';
+// ---------- helpers
+const $ = id => document.getElementById(id);
+const TR = [
+  {name:'Embers', col:'var(--ember)', hex:'#e8743b', ai:'raider'},
+  {name:'Wardens', col:'var(--warden)', hex:'#3eb3a8', ai:'keeper'},
+  {name:'Drifters', col:'var(--drifter)', hex:'#b08ce6', ai:'trader'}
+];
+const STANCES = {
+  expand:{label:'Expand', hint:'Hold what is cheap, push into the best neighbouring hex.'},
+  defend:{label:'Defend', hint:'Overfill every hex you hold by 30%. No attacks.'},
+  warburn:{label:'War-burn', hint:'Costs 5 NXN. In 2 days members burn in DBXen together: burns ×3, power surges. Attack hard that day.'},
+  hearth:{label:'Feed the Hearth', hint:'Members deposit XEN in the Granary: prestige now, and in the Long Fire it widens the habitable map for everyone.'},
+  rescue:{label:'Rescue sweep', hint:'Scouts hunt dying stars: +5 prestige per rescued mint, 10% tithe to the Granary.'}
+};
+const SYL1 = ['Ka','Ve','Or','Sy','Ma','Tor','Ily','Bra','Quen','Ash','Ro','Fen','Ul','Ner','Cal','Is'];
+const SYL2 = ['ra','eth','in','os','ael','un','ira','ok','esh','ar','ith','om','yr','en'];
+const CASTES = ['scout','smith','envoy','keeper'];
+const PEN = [0,1,3,8,17,35,72,99];
+let rng;
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R = () => rng();
+const pick = a => a[Math.floor(R()*a.length)];
+const beta22 = () => (R()+R()+R())/3;
+const lognorm = s => Math.exp(s*(R()+R()+R()+R()-2)*1.2);
+const fmt = (x,d=0) => Number(x).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+
+// ---------- map geometry
+const SIZE = 34, DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+function buildHexes(){
+  const hs = [];
+  for(let q=-3;q<=3;q++) for(let r=-3;r<=3;r++){
+    const s=-q-r; const ring=Math.max(Math.abs(q),Math.abs(r),Math.abs(s)); if(ring>3) continue;
+    const x=SIZE*Math.sqrt(3)*(q+r/2), y=SIZE*1.5*r;
+    let ang=Math.atan2(y,x)*180/Math.PI; // sector centred at -90, 30, 150
+    const rel=((ang+90+360+60)%360); const sector=Math.floor(rel/120);
+    hs.push({id:hs.length,q,r,ring,x,y,sector,owner:-1,frozen:false,cold:0,dead:false,w:[0,0,0],fuel:[0,0,0],held:0});
+  }
+  hs.forEach(h=>{h.nb=DIRS.map(([dq,dr])=>hs.findIndex(o=>o.q===h.q+dq&&o.r===h.r+dr)).filter(i=>i>=0)});
+  return hs;
+}
+
+// ---------- state
+let S, timer=null;
+function eraCfg(e){
+  if(e==='late') return {amp:400, remint:.5, storeFrac:1, label:'Late Creation'};
+  if(e==='long') return {amp:1, remint:.15, storeFrac:.62, label:'Long Fire'};
+  return {amp:1500, remint:.75, storeFrac:1, label:'Half-Light'};
+}
+function heat(amp, era, store, ref){
+  if(era==='long') return 9*Math.max(1, 1+Math.log(ref/Math.max(store,1))*0.15);
+  return 1+Math.log(3000/amp);
+}
+function newPlayer(t){
+  const caste = R()<.55 ? pick(CASTES) : null;
+  const term = 100+Math.floor(R()*370);
+  const birth = Math.floor(Math.exp(R()*Math.log(30e6)));
+  return {t, name:pick(SYL1)+pick(SYL2), caste, engage:beta22(), wealth:lognorm(1),
+    mint:{left:Math.floor(R()*term), term, amp:S.amp, late:-1}, stake:R()<.45?Math.floor(R()*400):-1,
+    burns:[0,0,0,0,0,0,0], birth, power:0, active:false, nxn:0};
+}
+function reset(){
+  stop();
+  rng = mulberry(+$('seed').value||7);
+  const era=$('era').value, cfg=eraCfg(era), n=+$('ppl').value;
+  S = {day:0, season:1, era, cfg, amp:cfg.amp, theta0:+$('th').value, hexes:buildHexes(), you:+$('you').value,
+    tribes:TR.map((t,i)=>({...t, i, stance:'expand', next:'expand', treasury:20, prestige:0, war:-1, lost3:[0,0,0], burned:0, deposited:0, rescues:0})),
+    players:[], store:0, storeRef:4000, log:[], hist:[], target:-1, reaping:null, ended:false, sponsorUsed:false,
+    st:{flips:0, close:0, freezes:0, thaws:0, leadChanges:0, leader:-1, rescues:0, deadStars:0, burnBatches:0, depBatches:0, nxnMinted:0, nxnBurned:0, warburns:0, comebacks:0, maxDeficit:[0,0,0], elims:0}};
+  S.store = S.storeRef*cfg.storeFrac;
+  S.H = heat(S.amp, era, S.store, S.storeRef);
+  for(let t=0;t<3;t++) for(let k=0;k<n;k++) S.players.push(newPlayer(t));
+  // starting territory: ring 1 and half of ring 2 in each sector
+  S.hexes.forEach(h=>{ if(h.ring===1 || (h.ring===2 && (h.q+h.r*2+9)%2===0)) h.owner = h.ring===0?-1:h.sector; if(h.ring===0) h.owner=-1; });
+  updateHabitable();
+  $('chron').innerHTML=''; $('seasonend').hidden=true; $('reaping').hidden=true;
+  log(`Season 1 opens in the ${cfg.label}. The sun stands at AMP ${S.amp}; every hex costs ${S.theta0} × ring × H(${S.H.toFixed(2)}) warmth to keep.`, true);
+  if(era==='long') log(`The Granary holds ${fmt(S.store)} batches. Only ${S.hexes.filter(h=>!h.dead).length-1} hexes lie within the Hearth's reach.`, true);
+  drawMap(); render();
+}
+function updateHabitable(){
+  // Long Fire: the Hearth's reach = Granary store relative to its reference
+  const cells = S.hexes.filter(h=>h.ring>0).sort((a,b)=>a.ring-b.ring || Math.hypot(a.x,a.y)-Math.hypot(b.x,b.y));
+  const n = S.era==='long' ? Math.max(6, Math.round(36*Math.min(1,S.store/S.storeRef))) : 36;
+  cells.forEach((h,i)=>{ const was=h.dead; h.dead = i>=n; if(h.dead && !was && h.owner>=0){ log(`${TR[h.owner].name} lose ring ${h.ring} hex ${h.id}: it fell outside the Hearth's reach.`); h.owner=-1; } });
+}
+function log(text, big=false){ S.log.push({d:S.day,text,big}); const el=document.createElement('div'); el.className='e'+(big?' big':''); el.innerHTML=`<span class="d">D${S.day}</span><span></span>`; el.lastChild.textContent=text; const c=$('chron'); c.prepend(el); while(c.children.length>160) c.lastChild.remove(); }
+
+// ---------- one day
+function theta(h){ return S.theta0*h.ring*S.H; }
+const yieldOf = h => h.ring;
+function power(p){
+  const ampW = Math.log(1+p.mint.amp)/Math.log(3001);
+  const T = p.mint.left>0 ? p.mint.left*ampW : 0;
+  const B = p.burns.reduce((a,b)=>a+b,0);
+  const St = Math.max(0,p.stake);
+  return Math.min(10, Math.log(1+T) + 2*Math.sqrt(B) + Math.log(1+St));
+}
+function aiStance(tr){
+  if(tr.i===S.you) return tr.next;
+  const held = S.hexes.filter(h=>h.owner===tr.i).length;
+  const losing = tr.lost3.reduce((a,b)=>a+b,0)>=2;
+  const dying = S.players.filter(p=>p.mint.late>=1).length;
+  if(losing && R()<.6) return 'defend';
+  if(tr.treasury>=5 && tr.war<S.day && R()<(tr.ai==='raider'?.1:.04)) return 'warburn';
+  if(S.era==='long' && S.store<S.storeRef*.8 && R()<(tr.ai==='trader'?.45:.2)) return 'hearth';
+  if(dying>4 && R()<(tr.ai==='keeper'?.35:.12)) return 'rescue';
+  if(tr.ai==='trader' && R()<.15) return 'hearth';
+  return held<8 && R()<.5 ? 'expand' : (R()<.7?'expand':'defend');
+}
+function step(){
+  if(S.ended) return;
+  S.day++;
+  // DAWN
+  if(S.era!=='long') S.amp=Math.max(1,S.amp-1);
+  if(S.era==='long'){ const rel = S.store/2900; S.store=Math.max(0,S.store-rel); }
+  S.H = heat(S.amp,S.era,S.store,S.storeRef);
+  S.tribes.forEach(t=>t.lost3.unshift(0)); S.tribes.forEach(t=>t.lost3.length=3);
+  // COUNCIL
+  S.tribes.forEach(t=>{
+    const st = aiStance(t); t.stance = st;
+    if(st==='warburn' && t.treasury>=5 && t.war<S.day){ t.treasury-=5; S.st.nxnBurned+=5; t.war=S.day+2; S.st.warburns++; log(`${t.name} declare a war-burn for cycle D${t.war}. 5 NXN burned from the treasury.`); t.stance='expand'; }
+    if(t.war===S.day) t.stance='warburn-day';
+  });
+  // ACTION
+  let depToday=0; const depBy=new Map();
+  S.players.forEach(p=>{
+    const tr=S.tribes[p.t];
+    p.burns.pop(); p.burns.unshift(0);
+    if(p.stake>=0){ p.stake++; if(R()<.002){ p.stake=0; } }
+    if(p.mint.left>0){ p.mint.left--; if(p.mint.left===0) p.mint.late=0; }
+    else if(p.mint.late>=0){ p.mint.late++; }
+    p.active = R() < .2+.7*p.engage;
+    if(!p.active){ p.power=0; return; }
+    // claim matured mint
+    if(p.mint.late>=0 && R()<.75){ claim(p, null); }
+    if(p.mint.left<=0 && p.mint.late<0 && R()<S.cfg.remint*.08){ const term=100+Math.floor(R()*370); p.mint={left:term,term,amp:S.amp,late:-1}; }
+    // burns
+    let pb = .12*p.engage + .03; let size=Math.max(1,Math.round(p.wealth*(.5+R())));
+    if(tr.stance==='warburn-day'){ pb=.85; size*=2; }
+    if(R()<pb){ size=Math.min(size,40); p.burns[0]+=size; tr.burned+=size; S.st.burnBatches+=size; }
+    // deposits
+    let pd = .03 + (p.caste==='smith'?.03:0) + (tr.stance==='hearth'?.45:0);
+    if(R()<pd){ const b=Math.max(1,Math.round(p.wealth*.6)); depToday+=b; depBy.set(p,(depBy.get(p)||0)+b); tr.deposited+=b; S.store+=b; S.st.depBatches+=b; tr.prestige+=b*.5; }
+    p.power = power(p);
+  });
+  // NXN emission split pro rata to depositors; 30% given to tribe treasuries
+  if(depToday>0){ const n=S.st.nxnMinted; const emit=1000*Math.pow(1.001,-(S.day))*0.02; S.st.nxnMinted+=emit; depBy.forEach((b,p)=>{ const g=emit*b/depToday; p.nxn+=g*.7; S.tribes[p.t].treasury+=g*.3; }); }
+  // allocation
+  S.hexes.forEach(h=>{h.w=[0,0,0]; h.fuel=[0,0,0];});
+  S.tribes.forEach(t=>allocate(t));
+  // DUSK
+  resolve();
+  rescues();
+  if(S.era==='long') updateHabitable();
+  // prestige from land
+  S.hexes.forEach(h=>{ if(h.owner>=0){ S.tribes[h.owner].prestige+=yieldOf(h); h.held++; } });
+  // reaping
+  if(S.day>=81) reapingRound();
+  // history + signals
+  const counts=[0,1,2].map(i=>S.hexes.filter(h=>h.owner===i).length);
+  S.hist.push({d:S.day,counts,frozen:S.hexes.filter(h=>h.frozen).length,store:S.store,prestige:S.tribes.map(t=>t.prestige)});
+  const lead = S.tribes.reduce((a,t)=>t.prestige>S.tribes[a].prestige?t.i:a,0);
+  if(S.st.leader>=0 && lead!==S.st.leader){ S.st.leadChanges++; log(`${TR[lead].name} take the lead in prestige.`, true); }
+  S.st.leader=lead;
+  if(S.hist.length>10){ const past=S.hist[S.hist.length-11].counts; const minI=past.indexOf(Math.min(...past)); if(counts[minI]===Math.max(...counts) && counts[minI]>past[minI]+2 && (S.lastComeback||-99)<S.day-10){ S.lastComeback=S.day; S.st.comebacks++; log(`Comeback: ${TR[minI].name} were last in land ten days ago and now hold the most.`, true); } }
+  if(S.day>=90) endSeason();
+  render();
+}
+function claim(p, byTribe){
+  const pen = PEN[Math.min(7,Math.max(0,p.mint.late))];
+  if(byTribe!=null){ const tr=S.tribes[byTribe]; tr.prestige+=5; tr.rescues++; S.st.rescues++; S.store+=0.3; log(`${tr.name} scouts rescue ${p.name}'s star ${p.mint.late} day${p.mint.late===1?'':'s'} late (penalty ${pen}%). The owner tithes 10% to the Granary.`); }
+  p.mint.late=-1; p.mint.left=0;
+  if(R()<S.cfg.remint){ const term=100+Math.floor(R()*370); p.mint={left:term,term,amp:S.amp,late:-1}; }
+}
+function rescues(){
+  const dying = S.players.filter(p=>p.mint.late>=1);
+  dying.forEach(p=>{
+    if(p.mint.late>=7){ S.st.deadStars++; p.mint.late=-1; p.mint.left=0; if(R()<.15) log(`${p.name}'s star burned out unclaimed: 99% of the reward is gone.`); return; }
+    for(const t of S.tribes){
+      const scouts = S.players.filter(q=>q.t===t.i && q.active && q.caste==='scout').length;
+      const pr = Math.min(.6, scouts*.02*(t.stance==='rescue'?3:1));
+      if(R()<pr){ claim(p,t.i); break; }
+    }
+  });
+}
+function allocate(t){
+  const mine = S.players.filter(p=>p.t===t.i && p.active && p.power>0).sort((a,b)=>b.power-a.power);
+  let pool = mine.map(p=>({p, pw:p.power*(1+(p.caste==='keeper'&&t.stance==='defend'?.1:0)+(p.caste==='envoy'?.05:0))}));
+  const owned = S.hexes.filter(h=>h.owner===t.i && !h.dead);
+  const defMul = t.stance==='defend'?1.3:1.05;
+  const attacking = t.stance!=='defend' && t.stance!=='hearth';
+  // abandon what cannot be held: keep the cheapest yield-per-cost first
+  const total = pool.reduce((a,x)=>a+x.pw,0);
+  owned.sort((a,b)=>(theta(a)/yieldOf(a))-(theta(b)/yieldOf(b)));
+  let budget = total*(attacking?.78:1);
+  const defend=[];
+  for(const h of owned){ const need=theta(h)*defMul; if(need<=budget || defend.length===0){ defend.push({h,need}); budget-=need; } }
+  // fill defence
+  const give=(h,need)=>{ let got=0; while(pool.length && got<need){ const x=pool.shift(); h.w[t.i]+=x.pw; got+=x.pw; } return got; };
+  for(const d of defend){ const got=give(d.h,d.need); const short=theta(d.h)-got;
+    const useFuel = t.i===S.you ? $('fuel').checked : true;
+    if(short>0 && short<=.3*theta(d.h) && useFuel){ const nxn=Math.min(t.treasury, short/2); if(nxn>=1){ t.treasury-=nxn; S.st.nxnBurned+=nxn; d.h.w[t.i]+=nxn*2; d.h.fuel[t.i]=nxn*2; } } }
+  if(!attacking){ pool.forEach(x=>{ if(defend.length){ const h=defend[0].h; h.w[t.i]+=x.pw; } }); return; }
+  // attack targets adjacent to own land (or ring 1, next to the Hearth)
+  const cand = S.hexes.filter(h=>h.ring>0 && !h.dead && h.owner!==t.i && (h.ring===1 || h.nb.some(i=>S.hexes[i].owner===t.i)));
+  const score = h=>{ const need = h.owner>=0 ? Math.max(.5*theta(h), (h.lastW||0)*1.25+1) : theta(h)*(h.frozen?1.2:1);
+    let v = yieldOf(h)/need; if(t.i===S.you && S.target===h.id) v*=50; if(t.stance==='warburn-day' && h.owner>=0) v*=1.5; return {h,need,v}; };
+  const ranked = cand.map(score).sort((a,b)=>b.v-a.v);
+  for(const c of ranked){ const have=pool.reduce((a,x)=>a+x.pw,0); if(have<c.need*.9) continue; give(c.h,c.need*1.08); if(!pool.length) break; }
+  pool.forEach(x=>{ if(defend.length) defend[0].h.w[t.i]+=x.pw; });
+}
+function resolve(){
+  S.hexes.forEach(h=>{
+    if(h.ring===0) return;
+    if(h.dead){ h.owner=-1; return; }
+    const th=theta(h); const o=h.owner;
+    const others=[0,1,2].filter(i=>i!==o).sort((a,b)=>h.w[b]-h.w[a]); const c=others[0];
+    if(o>=0){
+      h.lastW=h.w[o];
+      if(h.w[c]>h.w[o]*1.15 && h.w[c]>=.5*th){
+        const margin=(h.w[c]-h.w[o]*1.15)/h.w[c]; if(margin<.1) S.st.close++;
+        S.st.flips++; S.tribes[o].lost3[0]++; log(h.w[o]<1 ? `${TR[c].name} walk into unguarded ring ${h.ring} hex ${h.id}: ${TR[o].name} had no one left to keep it warm.` : `${TR[c].name} seize ring ${h.ring} hex ${h.id} from ${TR[o].name} (${fmt(h.w[c])} vs ${fmt(h.w[o])} warmth).`);
+        h.owner=c; h.cold=0; h.frozen=false; h.flash=true; return;
+      }
+      if(h.w[o]<th){ h.cold++; if(h.cold>=3){ S.st.freezes++; S.tribes[o].lost3[0]++; log(`Ring ${h.ring} hex ${h.id} freezes. ${TR[o].name} could not keep it warm for three turns.`); h.owner=-1; h.frozen=true; h.cold=0; h.flash=true; } }
+      else h.cold=0;
+    } else {
+      const best=[0,1,2].sort((a,b)=>h.w[b]-h.w[a])[0];
+      const need = th*(h.frozen?1.2:1);
+      if(h.w[best]>=need && h.w[best]>h.w[[0,1,2].sort((a,b)=>h.w[b]-h.w[a])[1]]){
+        if(h.frozen){ S.st.thaws++; log(`${TR[best].name} thaw ring ${h.ring} hex ${h.id} and claim it.`); } else log(`${TR[best].name} settle wild ring ${h.ring} hex ${h.id}.`);
+        h.owner=best; h.frozen=false; h.cold=0; h.lastW=h.w[best]; h.flash=true;
+      }
+    }
+  });
+}
+
+// ---------- the Reaping
+function reapingRound(){
+  if(!S.reaping){
+    const tribs=[];
+    S.tribes.forEach(t=>{ const pool=S.players.filter(p=>p.t===t.i).sort((a,b)=>b.engage-a.engage).slice(0,30); for(let k=0;k<2;k++){ const p=pool.splice(Math.floor(R()*pool.length),1)[0]; tribs.push({p,t:t.i,hp:10,atk:p.caste==='envoy'?2:1,def:p.caste==='keeper'?1:0,alive:true,crates:0,kills:0,zoneOk:true}); } });
+    S.reaping={round:0,tribs,zones:7,log:[]};
+    log(`The Reaping begins. A future block hash draws ${tribs.map(x=>x.p.name).join(', ')}.`, true);
+  }
+  const Rp=S.reaping; Rp.round++; Rp.zones=Math.max(1,7-Math.floor(Rp.round*.7));
+  const alive=()=>Rp.tribs.filter(x=>x.alive);
+  // sponsors: crates from active members, 3 per sponsor per day max, total capped
+  alive().forEach(x=>{ const sponsors=S.players.filter(p=>p.t===x.t && p.active && R()<.06).length; let c=Math.min(6,sponsors); x.crates+=c; if(c){ x.hp=Math.min(16,x.hp+c*.8); S.st.burnBatches+=c; } });
+  // the zone shrinks: tributes caught outside take damage
+  alive().forEach(x=>{ x.zoneOk = R() < Rp.zones/7 + .25; if(!x.zoneOk){ x.hp-=2; } });
+  // encounters
+  const a=alive().sort(()=>R()-.5);
+  for(let i=0;i+1<a.length;i+=2){
+    const x=a[i], y=a[i+1]; if(x.t===y.t && alive().length>3) continue; if(R()<.35 && alive().length>2) continue;
+    const rx=x.atk+Math.floor(R()*6)+Math.min(2,Math.floor(x.crates/4)), ry=y.atk+Math.floor(R()*6)+Math.min(2,Math.floor(y.crates/4));
+    const [w,l]= rx>=ry?[x,y]:[y,x]; const dmg=Math.max(1,Math.abs(rx-ry)+2-l.def); l.hp-=dmg;
+    log(`Reaping: ${w.p.name} (${TR[w.t].name}) strikes ${l.p.name} (${TR[l.t].name}) for ${dmg}.`);
+    if(l.hp<=0){ l.alive=false; w.kills++; S.st.elims++; log(`${l.p.name} of the ${TR[l.t].name} falls in the arena.`, true); }
+  }
+  alive().forEach(x=>{ if(x.hp<=0){ x.alive=false; S.st.elims++; log(`${x.p.name} of the ${TR[x.t].name} is taken by the cold.`, true);} });
+  if(S.day>=90 || alive().length<=1){
+    let rest=alive();
+    while(rest.length>1){ rest.sort((p,q)=>q.hp-p.hp); const l=rest.pop(); l.alive=false; S.st.elims++; log(`Final night: ${l.p.name} falls.`, true); rest=alive(); }
+    const v=rest[0] || Rp.tribs.sort((p,q)=>q.hp-p.hp)[0];
+    if(v && !Rp.victor){ Rp.victor=v; S.tribes[v.t].prestige+=40; log(`${v.p.name} of the ${TR[v.t].name} wins the Reaping, born at rank ${fmt(v.p.birth)}. +40 prestige and a seat on the Hearth Council.`, true); }
+  }
+}
+
+// ---------- season end
+function endSeason(){
+  S.ended=true; stop();
+  const order=[...S.tribes].sort((a,b)=>b.prestige-a.prestige);
+  const el=$('seasonend'); el.hidden=false; el.className='banner';
+  el.innerHTML=`<div class="eyebrow">Season 1 complete</div><h2></h2><p class="hint"></p>`;
+  el.querySelector('h2').textContent=`${order[0].name} win the season with ${fmt(order[0].prestige)} prestige`;
+  el.querySelector('p').textContent=`${order[1].name} ${fmt(order[1].prestige)} · ${order[2].name} ${fmt(order[2].prestige)}. Change a setting or the seed and start a new season to compare.`;
+  log(`Season ends. ${order[0].name} win with ${fmt(order[0].prestige)} prestige.`, true);
+}
+
+// ---------- rendering
+let hexEls=[];
+function hexPath(cx,cy){ let d=''; for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i-30); d+=(i?'L':'M')+(cx+SIZE*.96*Math.cos(a)).toFixed(1)+' '+(cy+SIZE*.96*Math.sin(a)).toFixed(1); } return d+'Z'; }
+function drawMap(){
+  const svg=$('map'); svg.innerHTML=''; hexEls=[];
+  const ns='http://www.w3.org/2000/svg';
+  const defs=document.createElementNS(ns,'defs'); defs.innerHTML='<radialGradient id="hg"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".6" stop-color="#f3c552"/><stop offset="1" stop-color="#b8792a"/></radialGradient>'; svg.appendChild(defs);
+  S.hexes.forEach(h=>{
+    const p=document.createElementNS(ns,'path'); p.setAttribute('d',hexPath(h.x,h.y)); p.setAttribute('class','hex'); p.setAttribute('tabindex', h.ring?'0':'-1');
+    p.addEventListener('mouseenter',e=>showTip(h,e)); p.addEventListener('mousemove',e=>showTip(h,e)); p.addEventListener('mouseleave',()=>$('tip').hidden=true);
+    p.addEventListener('click',()=>{ if(h.ring===0) return; if(S.you>=0){ S.target = S.target===h.id?-1:h.id; } showTip(h,null); render(); });
+    p.addEventListener('keydown',e=>{ if(e.key==='Enter'){ p.dispatchEvent(new Event('click')); } });
+    svg.appendChild(p); hexEls[h.id]=p;
+    if(h.ring>0){ const t=document.createElementNS(ns,'text'); t.setAttribute('x',h.x); t.setAttribute('y',h.y+3); t.setAttribute('text-anchor','middle'); t.setAttribute('class','hexlabel'); t.textContent=h.ring===3?'III':h.ring===2?'II':'I'; svg.appendChild(t); h.lbl=t; }
+  });
+  const ring=document.createElementNS(ns,'circle'); ring.setAttribute('cx',0); ring.setAttribute('cy',0); ring.setAttribute('r',14); ring.setAttribute('fill','url(#hg)'); ring.setAttribute('id','hearth'); ring.setAttribute('pointer-events','none'); svg.appendChild(ring);
+}
+function hexFill(h){
+  if(h.ring===0) return '#3a2f18';
+  if(h.dead) return 'var(--dead)';
+  if(h.owner>=0){ const cold=h.cold>0; return TR[h.owner].hex + (cold?'99':''); }
+  if(h.frozen) return 'var(--ice)';
+  return 'var(--neutral)';
+}
+function showTip(h,e){
+  const tip=$('tip'); if(h.ring===0){ tip.hidden=false; tip.innerHTML=`<b>The Hearth</b><br>Granary store: <span class="mono">${fmt(S.store)}</span> batches of XEN`; }
+  else{
+    const th=theta(h);
+    tip.innerHTML=`<b>Ring ${h.ring} hex ${h.id}</b> · ${h.dead?'beyond the Hearth':h.owner>=0?TR[h.owner].name:h.frozen?'frozen':'wild'}<br>Needs <span class="mono">${fmt(th)}</span> warmth · yields ${yieldOf(h)}/day<br>Last dusk: ${[0,1,2].map(i=>`${TR[i].name.slice(0,3)} <span class="mono">${fmt(h.w[i])}</span>${h.fuel[i]?'*':''}`).join(' · ')}${h.cold?`<br>Cold turns: ${h.cold}/3`:''}${S.target===h.id?'<br><b>Your attack target</b>':''}`;
+    tip.hidden=false;
+  }
+  if(e){ const box=$('mapbox').getBoundingClientRect(); let x=e.clientX-box.left+12, y=e.clientY-box.top+12; x=Math.min(x, box.width-250); tip.style.left=x+'px'; tip.style.top=y+'px'; }
+}
+function render(){
+  S.hexes.forEach(h=>{ const el=hexEls[h.id]; el.style.fill=hexFill(h); el.classList.toggle('sel', S.target===h.id); if(h.flash){ el.classList.remove('flash'); void el.getBBox(); el.classList.add('flash'); h.flash=false; } });
+  const hr=$('hearth'); if(hr) hr.setAttribute('r', (10+10*Math.min(1.4,S.store/S.storeRef)).toFixed(1));
+  $('dayv').textContent=`Day ${S.day}`; $('ampv').textContent=fmt(S.amp); $('hv').textContent=S.H.toFixed(2); $('habv').textContent=S.hexes.filter(h=>h.ring>0&&!h.dead).length;
+  const ph = S.day===0?-1:3; ['ph0','ph1','ph2','ph3'].forEach((id,i)=>$(id).classList.toggle('on', i===ph || (timer && i===(S.day%4))));
+  // tribes
+  const tw=$('tribes'); tw.innerHTML='';
+  S.tribes.forEach(t=>{
+    const held=S.hexes.filter(h=>h.owner===t.i).length; const cold=S.hexes.filter(h=>h.owner===t.i&&h.cold>0).length;
+    const act=S.players.filter(p=>p.t===t.i&&p.active).length; const pw=S.players.filter(p=>p.t===t.i&&p.active).reduce((a,p)=>a+p.power,0);
+    const d=document.createElement('div'); d.className='tribe';
+    const stLabel = t.stance==='warburn-day'?'War-burn day':(STANCES[t.stance]||{label:t.stance}).label;
+    d.innerHTML=`<div class="stripe" style="background:${t.col}"></div><div style="display:grid;gap:6px;min-width:0"><div class="head"><span class="name"></span><span class="chips"></span></div><div class="nums"><div><b>${held}</b><small>hexes</small></div><div><b>${fmt(t.prestige)}</b><small>prestige</small></div><div><b>${act}</b><small>active</small></div><div><b>${fmt(pw)}</b><small>power</small></div><div><b>${fmt(t.treasury,1)}</b><small>NXN</small></div></div></div>`;
+    d.querySelector('.name').textContent=t.name+(t.i===S.you?' · you':'');
+    const ch=d.querySelector('.chips'); const add=(txt,c='')=>{const s=document.createElement('span'); s.className='chip '+c; s.textContent=txt; ch.appendChild(s);};
+    add(stLabel, t.stance==='defend'?'warn':t.stance.startsWith('warburn')?'bad':'');
+    if(t.war>S.day) add(`war-burn D${t.war}`,'bad');
+    if(cold) add(`${cold} cold`,'warn');
+    if(S.st.leader===t.i) add('leads','good');
+    tw.appendChild(d);
+  });
+  // council
+  const you=S.you>=0; $('council').hidden=!you;
+  if(you){ const t=S.tribes[S.you]; const box=$('stances'); box.innerHTML='';
+    Object.entries(STANCES).forEach(([k,v])=>{ const b=document.createElement('button'); b.textContent=v.label; b.setAttribute('aria-pressed', t.next===k); b.disabled = k==='warburn' && (t.treasury<5 || t.war>=S.day); b.onclick=()=>{ t.next=k; $('stancehint').textContent=v.hint; render(); }; box.appendChild(b); });
+    $('stancehint').textContent=STANCES[t.next].hint;
+    $('target').textContent = S.target>=0 ? `Target: ring ${S.hexes[S.target].ring} hex ${S.target}. Click it again to clear.` : 'Target: none. Click a hex on the map to focus your attack.';
+    $('sponsorbox').hidden = !(S.reaping && !S.ended && S.reaping.tribs.some(x=>x.t===S.you&&x.alive));
+    $('sponsor').disabled = S.sponsorUsed===S.day || t.treasury<3;
+  }
+  // reaping
+  const rp=$('reaping');
+  if(S.reaping){ rp.hidden=false; const Rp=S.reaping;
+    rp.innerHTML=`<div class="eyebrow">The Reaping · round ${Rp.round} of 10 · safe zones ${Rp.zones}/7</div>`;
+    Rp.tribs.forEach(x=>{ const r=document.createElement('div'); r.className='trib'+(x.alive?'':' dead'); r.innerHTML=`<span></span><span class="hp"><i style="width:${Math.max(0,Math.min(100,x.hp/16*100))}%;background:${TR[x.t].col}"></i></span>`; r.firstChild.textContent=`${x.p.name} · ${TR[x.t].name}${x.p.caste?' · '+x.p.caste:''} · ${x.crates} crates${Rp.victor===x?' · victor':''}`; rp.appendChild(r); });
+  } else rp.hidden=true;
+  drawChart(); drawSignals();
+}
+function drawChart(){
+  const svg=$('chart'); const W=520,H=170,L=34,Rr=10,T=10,B=24; const n=90;
+  const top=Math.max(.5,...S.hist.map(h=>Math.max(...h.counts)/36))*1.05; const X=d=>L+(W-L-Rr)*d/n, Y=v=>T+(H-T-B)*(1-v/top);
+  let s=`<g stroke="#2a3447" stroke-width="1">`; [0,top/4,top/2,top*3/4,top].forEach(v=>{s+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}"/>`;}); s+='</g>';
+  [0,top/2,top].forEach(v=>{s+=`<text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#727b8e" font-family="JetBrains Mono, monospace">${Math.round(v*100)}%</text>`;});
+  [0,30,60,81,90].forEach(d=>{s+=`<text x="${X(d)}" y="${H-6}" text-anchor="middle" font-size="10" fill="#727b8e" font-family="JetBrains Mono, monospace">D${d}</text>`;});
+  s+=`<rect x="${X(80.5)}" y="${T}" width="${X(90)-X(80.5)}" height="${H-T-B}" fill="#f3c552" opacity=".08"/><text x="${X(85)}" y="${H-B-6}" text-anchor="middle" font-size="10" fill="#f3c552">Reaping</text>`;
+  const pts=[{d:0,counts:[0,1,2].map(i=>S.hexes.filter(h=>h.owner===i).length),frozen:0}];
+  const all=S.hist.length?S.hist:[]; const series=(i)=>[{d:0,c:S.hist.length?S.hist[0].counts[i]:pts[0].counts[i]},...all.map(h=>({d:h.d,c:h.counts[i]}))];
+  [0,1,2].forEach(i=>{ const ser=series(i); s+=`<polyline fill="none" stroke="${TR[i].hex}" stroke-width="2" points="${ser.map(p=>X(p.d)+','+Y(p.c/36)).join(' ')}"/>`; const last=ser[ser.length-1]; s+=`<circle cx="${X(last.d)}" cy="${Y(last.c/36)}" r="3" fill="${TR[i].hex}"/>`; });
+  if(all.length) s+=`<polyline fill="none" stroke="#8fa9bf" stroke-dasharray="3 3" stroke-width="1.5" points="${all.map(h=>X(h.d)+','+Y(h.frozen/36)).join(' ')}"/>`;
+  s+=`<text x="${L+6}" y="${T+10}" font-size="10" fill="#a9b0bf">share of the 36 hexes · dashed = frozen</text>`;
+  svg.innerHTML=s;
+}
+function drawSignals(){
+  const st=S.st, d=Math.max(1,S.day);
+  const sig=[
+    [fmt(st.flips/d,2),'hexes seized per day'],[st.leadChanges,'lead changes'],[st.close,'seizures won by a hair'],[st.comebacks,'comebacks'],
+    [st.freezes,'hexes frozen'],[st.thaws,'thaws'],[st.rescues,'stars rescued'],[st.deadStars,'stars burned out'],[st.warburns,'war-burns called'],[st.elims,'Reaping falls']
+  ];
+  $('signals').innerHTML=sig.map(([v,k])=>`<div class="sig"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+  $('chain').innerHTML=[[fmt(st.burnBatches),'XEN batches burned in DBXen (2.5M each)'],[fmt(st.depBatches),'batches deposited in the Granary'],[fmt(st.nxnMinted,1),'NXN minted (scaled)'],[fmt(st.nxnBurned,1),'NXN burned in the game'],[fmt(S.store),'Granary store now']].map(([v,k])=>`<div class="sig"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+  const v=[]; if(S.day>=15){
+    const fpd=st.flips/d;
+    if(fpd<.15) v.push(['bad','The map barely moves. Tribes can only hold what they start with; try more players, a lower θ₀, or stronger war-burns.']);
+    else if(fpd>1.5) v.push(['warn','Land changes hands so often that holding feels pointless. Raise θ₀ or the defender bonus.']);
+    else v.push(['good',`Territory moves at a readable pace (${fmt(fpd,2)} seizures a day).`]);
+    if(S.day>=40 && st.leadChanges===0) v.push(['warn','One tribe has led since the start. Needs a catch-up mechanic (comeback bonus, Reaping weight, alliances).']);
+    if(st.leadChanges>0) v.push(['good',`The lead has changed ${st.leadChanges} time${st.leadChanges>1?'s':''}: the race is open.`]);
+    if(st.freezes>d*.3) v.push(['warn','Cold is the main opponent: many hexes freeze. Good for the survival feel, bad if players feel helpless.']);
+    if(st.deadStars>st.rescues*2 && S.day>30) v.push(['warn','Most dying stars burn out unrescued: rescues need to be easier or better rewarded.']);
+    const held=S.hexes.filter(h=>h.owner>=0).length, hab=S.hexes.filter(h=>h.ring>0&&!h.dead).length; if(held<hab*.4) v.push(['warn',`Only ${held} of ${hab} habitable hexes are held. At this heat the world is mostly empty.`]);
+  } else v.push(['', 'Signals appear after day 15.']);
+  $('verdict').innerHTML=v.map(([c,t])=>`<div class="${c}"></div>`).join(''); [...$('verdict').children].forEach((el,i)=>el.textContent=v[i][1]);
+}
+
+// ---------- controls
+function stop(){ if(timer){ clearInterval(timer); timer=null; } $('play').textContent='Play'; }
+function play(){ if(timer){ stop(); return; } if(S.ended) return; $('play').textContent='Pause'; timer=setInterval(()=>{ step(); if(S.you>=0 && $('pauseeach').checked) stop(); }, 1000/+$('speed').value); }
+$('play').onclick=play; $('step').onclick=()=>{ stop(); step(); };
+$('jump').onclick=()=>{ stop(); while(S.day<80 && !S.ended) stepQuiet(); render(); };
+function stepQuiet(){ step(); }
+$('reset').onclick=reset;
+['era','you','seed'].forEach(id=>$(id).addEventListener('change',reset));
+$('ppl').addEventListener('input',()=>{$('pplv').textContent=$('ppl').value}); $('ppl').addEventListener('change',reset);
+$('th').addEventListener('input',()=>{$('thv').textContent=$('th').value}); $('th').addEventListener('change',reset);
+$('speed').addEventListener('input',()=>{$('speedv').textContent=$('speed').value; if(timer){ stop(); play(); }});
+$('sponsor').onclick=()=>{ const t=S.tribes[S.you]; if(t.treasury<3||!S.reaping) return; t.treasury-=3; S.st.nxnBurned+=3; S.sponsorUsed=S.day; S.reaping.tribs.filter(x=>x.t===S.you&&x.alive).forEach(x=>{ x.crates+=3; x.hp=Math.min(16,x.hp+2.4); }); log(`${t.name} council sponsors its tributes: 3 crates, 3 NXN burned.`); render(); };
+
+reset();
+// open on a running season so the first view shows the game in motion
+for(let i=0;i<24;i++) step();
+render();
+})();
+</script>

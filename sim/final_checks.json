@@ -1,0 +1,33 @@
+{
+ "horizon_3y": {
+  "post_floor_median": 0.164,
+  "worst_year_median": 0.013,
+  "flow_2036_median": 0.012,
+  "store_left_2037_median": 0.0
+ },
+ "horizon_5y": {
+  "post_floor_median": 0.166,
+  "worst_year_median": 0.019,
+  "flow_2036_median": 0.012,
+  "store_left_2037_median": 0.0
+ },
+ "horizon_8y": {
+  "post_floor_median": 0.136,
+  "worst_year_median": 0.11,
+  "flow_2036_median": 0.112,
+  "store_left_2037_median": 0.347
+ },
+ "no_granary": {
+  "post_floor_median": 0.052,
+  "worst_year_median": 0.011,
+  "flow_2036_median": 0.009
+ },
+ "low_diversion": {
+  "pre_floor_flow_vs_no_granary": 0.97,
+  "post_floor_flow_vs_no_granary": 2.28
+ },
+ "high_diversion": {
+  "pre_floor_flow_vs_no_granary": 0.743,
+  "post_floor_flow_vs_no_granary": 3.77
+ }
+}

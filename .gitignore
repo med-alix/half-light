@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Large source assets kept outside the repo for now
+*.blend
+*.blend1
+*.glb
+*.gltf
+*.wasm

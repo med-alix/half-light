@@ -1,0 +1,25 @@
+{
+ "top10_share_capital": 0.74,
+ "top10_share_linear_power": 0.26,
+ "top10_share_dampened_capped_power": 0.12,
+ "split_1": {
+  "sum_rule": 10.0,
+  "quadratic_rule": 10.0
+ },
+ "split_2": {
+  "sum_rule": 20.0,
+  "quadratic_rule": 40.0
+ },
+ "split_5": {
+  "sum_rule": 50.0,
+  "quadratic_rule": 250.0
+ },
+ "split_10": {
+  "sum_rule": 100.0,
+  "quadratic_rule": 1000.0
+ },
+ "split_20": {
+  "sum_rule": 200.0,
+  "quadratic_rule": 4000.0
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "release_8pct_per_year": {
+  "post_floor_median": 0.088,
+  "worst_year_median": 0.052,
+  "flow_2036_median": 0.051,
+  "store_left_2037_vs_floor": 0.85
+ },
+ "release_12pct_per_year": {
+  "post_floor_median": 0.104,
+  "worst_year_median": 0.062,
+  "flow_2036_median": 0.06,
+  "store_left_2037_vs_floor": 0.68
+ },
+ "release_20pct_per_year": {
+  "post_floor_median": 0.126,
+  "worst_year_median": 0.067,
+  "flow_2036_median": 0.066,
+  "store_left_2037_vs_floor": 0.43
+ }
+}
