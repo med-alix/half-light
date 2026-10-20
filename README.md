@@ -13,7 +13,7 @@ XEN's amplifier falls by one every day and reaches 1 around 24 December 2030. Af
 
 ## Read the book
 
-Start at [`docs/README.md`](docs/README.md), or read it on GitBook once the repository is connected.
+Read it online at **https://med-alix.github.io/half-light/**, or start at [`docs/README.md`](docs/README.md).
 
 | Section | What's inside |
 | --- | --- |
@@ -28,7 +28,8 @@ Start at [`docs/README.md`](docs/README.md), or read it on GitBook once the repo
 ## Repository layout
 
 ```
-docs/          the book (GitBook), with diagrams and art in docs/assets/
+docs/          the book (Markdown), with diagrams and art in docs/assets/
+website/       the Docusaurus site that publishes docs/ to GitHub Pages
 sim/           Monte Carlo model of XEN, DBXen and the Granary (Python)
 sim/game/      the season simulator (open the HTML file in a browser)
 tools/         scripts that generate the diagrams

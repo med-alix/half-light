@@ -17,3 +17,8 @@ desktop.ini
 *.glb
 *.gltf
 *.wasm
+
+# Docusaurus site
+website/node_modules/
+website/build/
+website/.docusaurus/

@@ -1,0 +1,39 @@
+/* HALF-LIGHT theme: ember on dusk. */
+
+:root {
+  --ifm-color-primary: #b4561c;
+  --ifm-color-primary-dark: #a24d19;
+  --ifm-color-primary-darker: #994918;
+  --ifm-color-primary-darkest: #7e3c13;
+  --ifm-color-primary-light: #c65f1f;
+  --ifm-color-primary-lighter: #cf6420;
+  --ifm-color-primary-lightest: #df7a3a;
+  --ifm-code-font-size: 92%;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #f0954e;
+  --ifm-color-primary-dark: #ee8331;
+  --ifm-color-primary-darker: #ed7a22;
+  --ifm-color-primary-darkest: #d16110;
+  --ifm-color-primary-light: #f2a76b;
+  --ifm-color-primary-lighter: #f3b07a;
+  --ifm-color-primary-lightest: #f6caa6;
+  --ifm-background-color: #14110f;
+  --ifm-background-surface-color: #1c1815;
+  --ifm-navbar-background-color: #1c1815;
+  --ifm-footer-background-color: #0f0d0b;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+}
+
+.markdown img {
+  border-radius: 6px;
+}
+
+/* Wide tables scroll instead of breaking the layout on phones. */
+.markdown table {
+  display: block;
+  overflow-x: auto;
+}
