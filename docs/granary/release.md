@@ -13,11 +13,13 @@ The Granary releases stored XEN into DBXen whenever DBXen goes cold, not only af
 
 Each cycle the Granary opens an **allowance** of batches:
 
-**allowance = ½ × gap + annuity**
+$$
+\text{allowance} = \tfrac{1}{2} \times \text{gap} + \text{annuity}
+$$
 
 | Part | Rule | When |
 | --- | --- | --- |
-| Gap | gap = max(0, L − S) on market activity, measured as burns per DXN emitted (see [Climate and weather](../game/climate-and-weather.md)); S = 7-cycle average, L = 180-cycle average; converted back to batches | Any era |
+| Gap | $\text{gap} = \max(0,\ L - S)$ on market activity, measured as burns per DXN emitted (see [Climate and weather](../game/climate-and-weather.md)); $S$ = 7-cycle average, $L$ = 180-cycle average; converted back to batches | Any era |
 | Annuity | store ÷ days left until the horizon (8 years after the floor), with a 90-day ramp | After the floor |
 
 Limits:

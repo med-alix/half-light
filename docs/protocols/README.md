@@ -4,11 +4,11 @@ HALF-LIGHT and the Granary sit on three existing protocols. Everything below was
 
 | Layer | Contract rule | In the world | Status |
 | --- | --- | --- | --- |
-| XEN | AMP = max(3000 − days since genesis, 1), locked into each mint at claimRank | The sun cools | Verified in source |
+| XEN | $\text{AMP} = \max(3000 - \text{days since genesis},\ 1)$, locked into each mint at claimRank | The sun cools | Verified in source |
 | XEN | globalRank increments on every claimRank; each mint stores its cRank | Birth order and era | Verified in source |
-| XEN | Reward = log2(max(globalRank − cRank, 2)) × AMP × term × (1000 + EAAR) / 1000; no balance input | Power from time and arrival, not wealth | Verified in source |
+| XEN | $\text{reward} = \log_2\!\big(\max(\text{globalRank} - \text{cRank},\ 2)\big) \times \text{AMP} \times \text{term} \times \frac{1000 + \text{EAAR}}{1000}$; no balance input | Power from time and arrival, not wealth | Verified in source |
 | XEN | EAAR starts at 100‰ and drops 1 per 100,000 ranks (0 after rank 10M) | Early-adopter bonus already gone | Verified in source |
-| XEN | Max term = 100 + 15 × log2(globalRank) days, capped at 1,000 (≈ 465–480 days today) | Oaths | Verified in source |
+| XEN | Max term $= 100 + 15 \log_2(\text{globalRank})$ days, capped at 1,000 (≈ 465–480 days today) | Oaths | Verified in source |
 | XEN | Late-claim penalty by days late: 0, 1, 3, 8, 17, 35, 72%, then 99% | Dying stars | Verified in source |
 | XEN | Staking burns XEN, then re-mints principal + reward at withdrawal; APY = 20% − 1 per 90 days, floor 2%, locked at stake start; one stake per address | Seasons; keepers | Verified in source |
 | XEN | burn(user, amount) only from contracts implementing IBurnRedeemable; records userBurns; emits Transfer to 0x0 | Temples | Verified in source |

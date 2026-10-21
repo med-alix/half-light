@@ -13,12 +13,14 @@ NXD is a protocol that holds staked DXN and spends its DBXen fees.
 
 ## A compounding loop
 
-Because NXD re-stakes part of its income as DXN, its share φ of all staked DXN grows like a logistic curve:
+Because NXD re-stakes part of its income as DXN, its share $\varphi$ of all staked DXN grows like a logistic curve:
 
-**dφ/dt = y × ρ_N × φ × (1 − φ)**
+$$
+\frac{d\varphi}{dt} = y \, \rho_N \, \varphi \, (1 - \varphi)
+$$
 
-- y = daily fee yield of staked DXN;
-- ρ_N = share of NXD's income that ends up re-staked as DXN (to read from the contract).
+- $y$ = daily fee yield of staked DXN;
+- $\rho_N$ = share of NXD's income that ends up re-staked as DXN (to read from the contract).
 
 NXD keeps taking a larger share of DBXen fees over time. This matters for the Granary: see [Storage and routing](../granary/storage-and-routing.md).
 

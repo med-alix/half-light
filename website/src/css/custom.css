@@ -32,6 +32,13 @@
   border-radius: 6px;
 }
 
+/* Long equations scroll sideways on phones instead of overflowing the page. */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
 /* Wide tables scroll instead of breaking the layout on phones. */
 .markdown table {
   display: block;

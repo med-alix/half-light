@@ -24,11 +24,11 @@ No premine, no team allocation, no admin keys.
 
 | Rule | Draft position |
 | --- | --- |
-| Emission | 1,000 × 1.001^−n NXN per active cycle; max supply ≈ 1,001,000 |
+| Emission | $1{,}000 \times 1.001^{-n}$ NXN per active cycle; max supply ≈ 1,001,000 |
 | Emission split | 60% to depositors, 40% to game territory holders |
 | Deposits | XEN in 2.5M batches (plus an energy fee); DXN and NXD in any amount; never withdrawable |
 | Half-burn deposits | Each XEN deposit burns 50% through DBXen at once and stores 50% (to simulate) |
-| Pool weights | XEN = 0.5 + 0.4 × AMP / 3000; DXN = ⅔ of the rest; NXD = ⅓ of the rest |
+| Pool weights | XEN $= 0.5 + 0.4 \times \text{AMP} / 3000$; DXN = ⅔ of the rest; NXD = ⅓ of the rest |
 | Burner bonus | 1.25× deposit weight for wallets that also burned in DBXen that cycle |
 | DXN and NXD share | No hard cap; rewards taper as the Granary's share of staked DXN or NXD grows (hard 10% cap as the alternative) |
 | Energy fee | DBXen's fee formula; funds the small reserve; surplus buys XEN for the store |

@@ -4,7 +4,13 @@ On XEN day 2,999 (about **24 December 2030**) AMP reaches 1. Contract by contrac
 
 ## XEN keeps minting, but small
 
-At AMP = 1 the reward becomes **r ≈ log2(Δ) × term**. XEN still pays for waiting and for network growth, about 9,400 XEN for a max-term mint. Mints happen whenever the price beats the gas cost (the **dawn line**). XEN becomes a small, steady money with:
+At AMP = 1 the reward becomes
+
+$$
+r \approx \log_2(\Delta) \times \text{term}
+$$
+
+ XEN still pays for waiting and for network growth, about 9,400 XEN for a max-term mint. Mints happen whenever the price beats the gas cost (the **dawn line**). XEN becomes a small, steady money with:
 
 | Part | After the floor |
 | --- | --- |
@@ -25,7 +31,7 @@ claimRank still works at AMP 1 for the price of gas. A rank becomes proof of par
 
 ## DBXen burns the reserve
 
-A batch is still 2.5M XEN, now drawn from existing supply. The fee depends on gas, not on XEN's price. Emission only decays on cycles with burns, so a quiet forge pauses emission instead of ending it. With emission at about 1/20 of today, burns fall by (1/20)^ε.
+A batch is still 2.5M XEN, now drawn from existing supply. The fee depends on gas, not on XEN's price. Emission only decays on cycles with burns, so a quiet forge pauses emission instead of ending it. With emission at about 1/20 of today, burns fall by a factor $(1/20)^{\varepsilon}$.
 
 ## NXD follows the burns
 

@@ -5,86 +5,98 @@ const {themes: prismThemes} = require('prism-react-renderer');
 
 const repo = 'https://github.com/med-alix/half-light';
 
-/** @type {import('@docusaurus/types').Config} */
-module.exports = {
-  title: 'HALF-LIGHT',
-  tagline: "A tribe survival game on XEN's clock, and the NXN protocol that keeps DBXen burning.",
-  favicon: 'img/favicon.svg',
+// remark-math and rehype-katex are ESM-only, so the config is built in an async function.
+module.exports = async function createConfig() {
+  const remarkMath = (await import('remark-math')).default;
+  const rehypeKatex = (await import('rehype-katex')).default;
 
-  url: 'https://med-alix.github.io',
-  baseUrl: '/half-light/',
-  organizationName: 'med-alix',
-  projectName: 'half-light',
-  trailingSlash: true,
+  /** @type {import('@docusaurus/types').Config} */
+  return {
+    title: 'HALF-LIGHT',
+    tagline: "A tribe survival game on XEN's clock, and the NXN protocol that keeps DBXen burning.",
+    favicon: 'img/favicon.svg',
 
-  onBrokenLinks: 'throw',
+    url: 'https://med-alix.github.io',
+    baseUrl: '/half-light/',
+    organizationName: 'med-alix',
+    projectName: 'half-light',
+    trailingSlash: true,
 
-  markdown: {
-    // .md files are read as plain CommonMark, not MDX, so GitBook-era Markdown works unchanged.
-    format: 'detect',
-    hooks: {onBrokenMarkdownLinks: 'throw'},
-  },
+    onBrokenLinks: 'throw',
 
-  i18n: {defaultLocale: 'en', locales: ['en']},
+    markdown: {
+      // .md files are read as plain CommonMark, not MDX, so GitBook-era Markdown works unchanged.
+      format: 'detect',
+      hooks: {onBrokenMarkdownLinks: 'throw'},
+    },
 
-  presets: [
-    [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
-        docs: {
-          path: '../docs',
-          routeBasePath: '/',
-          sidebarPath: require.resolve('./sidebars.js'),
-          exclude: ['SUMMARY.md', '.gitbook.yaml'],
-          editUrl: `${repo}/edit/main/`,
-          showLastUpdateTime: true,
-        },
-        blog: false,
-        theme: {customCss: require.resolve('./src/css/custom.css')},
-      }),
+    i18n: {defaultLocale: 'en', locales: ['en']},
+
+    // KaTeX fonts and styles, bundled with the site (no CDN).
+    clientModules: [require.resolve('katex/dist/katex.min.css')],
+
+    presets: [
+      [
+        'classic',
+        /** @type {import('@docusaurus/preset-classic').Options} */
+        ({
+          docs: {
+            path: '../docs',
+            routeBasePath: '/',
+            sidebarPath: require.resolve('./sidebars.js'),
+            exclude: ['SUMMARY.md'],
+            editUrl: `${repo}/edit/main/`,
+            showLastUpdateTime: true,
+            // $inline$ and $$display$$ math, rendered to HTML at build time by KaTeX.
+            remarkPlugins: [remarkMath],
+            rehypePlugins: [[rehypeKatex, {strict: false}]],
+          },
+          blog: false,
+          theme: {customCss: require.resolve('./src/css/custom.css')},
+        }),
+      ],
     ],
-  ],
 
-  themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
-      image: 'img/social-card.jpg',
-      colorMode: {defaultMode: 'dark', respectPrefersColorScheme: true},
-      docs: {sidebar: {hideable: true}},
-      navbar: {
-        title: 'HALF-LIGHT',
-        logo: {alt: 'HALF-LIGHT', src: 'img/favicon.svg'},
-        items: [
-          {type: 'doc', docId: 'protocols/README', label: 'Protocols', position: 'left'},
-          {type: 'doc', docId: 'granary/README', label: 'NXN', position: 'left'},
-          {type: 'doc', docId: 'game/README', label: 'Game', position: 'left'},
-          {type: 'doc', docId: 'model/README', label: 'Model', position: 'left'},
-          {href: repo, label: 'GitHub', position: 'right'},
-        ],
-      },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Read',
-            items: [
-              {label: 'Vision', to: '/vision/'},
-              {label: 'The winter problem', to: '/the-winter-problem/'},
-              {label: 'Glossary', to: '/glossary/'},
-            ],
-          },
-          {
-            title: 'Take part',
-            items: [
-              {label: 'Open questions', to: '/open-questions/'},
-              {label: 'Contributing', to: '/contributing/'},
-              {label: 'GitHub', href: repo},
-            ],
-          },
-        ],
-        copyright: `HALF-LIGHT design book · Built with Docusaurus`,
-      },
-      prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula, additionalLanguages: ['solidity']},
-    }),
+    themeConfig:
+      /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+      ({
+        image: 'img/social-card.jpg',
+        colorMode: {defaultMode: 'dark', respectPrefersColorScheme: true},
+        docs: {sidebar: {hideable: true}},
+        navbar: {
+          title: 'HALF-LIGHT',
+          logo: {alt: 'HALF-LIGHT', src: 'img/favicon.svg'},
+          items: [
+            {type: 'doc', docId: 'protocols/README', label: 'Protocols', position: 'left'},
+            {type: 'doc', docId: 'granary/README', label: 'NXN', position: 'left'},
+            {type: 'doc', docId: 'game/README', label: 'Game', position: 'left'},
+            {type: 'doc', docId: 'model/README', label: 'Model', position: 'left'},
+            {href: repo, label: 'GitHub', position: 'right'},
+          ],
+        },
+        footer: {
+          style: 'dark',
+          links: [
+            {
+              title: 'Read',
+              items: [
+                {label: 'Vision', to: '/vision/'},
+                {label: 'The winter problem', to: '/the-winter-problem/'},
+                {label: 'Glossary', to: '/glossary/'},
+              ],
+            },
+            {
+              title: 'Take part',
+              items: [
+                {label: 'Open questions', to: '/open-questions/'},
+                {label: 'Contributing', to: '/contributing/'},
+                {label: 'GitHub', href: repo},
+              ],
+            },
+          ],
+          copyright: `HALF-LIGHT design book · Built with Docusaurus`,
+        },
+        prism: {theme: prismThemes.github, darkTheme: prismThemes.dracula, additionalLanguages: ['solidity']},
+      }),
+  };
 };

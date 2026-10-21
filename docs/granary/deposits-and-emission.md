@@ -4,7 +4,7 @@
 
 | Asset | Unit | Notes |
 | --- | --- | --- |
-| XEN | Batches of 2.5M | Pays an energy fee with DBXen's formula: gas × batches × (1 − 0.00005 × batches) |
+| XEN | Batches of 2.5M | Pays an energy fee with DBXen's formula: $\text{gas} \times b \times (1 - 0.00005\, b)$ for $b$ batches |
 | DXN | Any amount | Staked permanently in DBXen |
 | NXD | Any amount | Staked permanently in NXD's staking vault |
 
@@ -16,7 +16,11 @@ Each XEN deposit burns **50% through DBXen immediately** and stores the other 50
 
 ## Emission
 
-**NXN per active cycle = 1,000 × 1.001^−n**, n = active cycles so far. Maximum supply ≈ 1,001,000. No premine.
+$$
+\text{NXN per active cycle} = 1{,}000 \times 1.001^{-n}
+$$
+
+where $n$ is the number of active cycles so far. Maximum supply ≈ 1,001,000. No premine.
 
 Why 1.001 and not DXN's 1.002: with 1.002, 52% of all NXN would be minted in the first year. With 1.001 and the game sink below, median supply peaks around October 2030, near the floor, and shrinks afterwards in 61% of simulated runs.
 
@@ -31,7 +35,7 @@ The territory share is what makes winning in the game matter. See [Winning, losi
 
 ### Pool weights for the depositor share
 
-- **XEN pool** = 0.5 + 0.4 × AMP / 3000 (0.70 today, 0.50 at the floor), read from `getCurrentAMP()`, no oracle.
+- **XEN pool** $= 0.5 + 0.4 \times \text{AMP} / 3000$ (0.70 today, 0.50 at the floor), read from `getCurrentAMP()`, no oracle.
 - **DXN pool** = ⅔ of the rest; **NXD pool** = ⅓ of the rest.
 - Inside a pool: pro rata to that cycle's deposits. An empty pool's share is not minted.
 

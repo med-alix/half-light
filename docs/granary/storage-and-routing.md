@@ -33,7 +33,7 @@ All swaps are Uniswap TWAP-limited: at most 0.5% of pool depth per swap, at most
 
 Both NXD and the Granary re-stake part of their DBXen income as DXN. Their shares of staked DXN grow at:
 
-- NXD: **y × ρ_N × φ(1 − φ)**, with ρ_N the share NXD re-stakes (most of its 85%, minus burns);
-- Granary: **d_G / D_total + y × 0.2 × φ_G (1 − φ)**, where d_G is new DXN deposited.
+- NXD: $y \, \rho_N \, \varphi (1 - \varphi)$, with $\rho_N$ the share NXD re-stakes (most of its 85%, minus burns);
+- Granary: $d_G / D_{\text{total}} + 0.2\, y \, \varphi_G (1 - \varphi)$, where $d_G$ is new DXN deposited.
 
-Since the Granary re-stakes only 20%, its compounding should be much weaker than NXD's (to confirm once ρ_N is read from the contract). Its share grows mainly through deposits, so a cap or taper only matters if DXN deposits are large.
+Since the Granary re-stakes only 20%, its compounding should be much weaker than NXD's (to confirm once $\rho_N$ is read from the contract). Its share grows mainly through deposits, so a cap or taper only matters if DXN deposits are large.

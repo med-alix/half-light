@@ -14,8 +14,8 @@
 | **Glow** | The game power of a Granary deposit; halves every 30 days. |
 | **Granary** | The NXN protocol contract that stores XEN now and burns it into DBXen after the floor. The Hearth in the game. |
 | **Half-Light** | 16 Nov 2026, the day AMP crosses 1,500, half of its starting value. The pre-season. |
-| **Climate (C)** | The slow, structural cold: 1 + ½·ln(3000 / AMP) + ½·ln(10,000 / R). |
-| **Heat** | How hard the map is: climate × 2^(−weather). |
+| **Climate (C)** | The slow, structural cold: $1 + \tfrac{1}{2}\ln(3000 / \text{AMP}) + \tfrac{1}{2}\ln(10{,}000 / R)$. |
+| **Heat** | How hard the map is: $C \times 2^{-w}$ (climate $C$, weather $w$). |
 | **Hearth** | The fire at the centre of the map; shows the real Granary store. |
 | **Keeper of the Hearth** | The tribe whose member lit the Hearth that cycle. |
 | **Lighting the Hearth** | The rising-share auction in which anyone pays the DBXen fee to burn the Granary's release allowance and keeps part of the DXN. |

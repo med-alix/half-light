@@ -66,7 +66,7 @@ Other findings:
 - **Tribe prestige** (Keeper of the Hearth) raised the Granary's kept share by about 12 points.
 - **A closed tribe cartel** cut the kept share to about 10%; **open access** (Outlaws and bots can light) restored it fully.
 - **Releasing on quiet cycles** made results worse, because it speeds DXN decay. The active-cycle rule stays.
-- **Weather must use burns per DXN emitted.** Raw burns read as winter about 70% of the time (mean w ≈ −0.35); burns per DXN give a mean of about zero.
+- **Weather must use burns per DXN emitted.** Raw burns read as winter about 70% of the time (mean $w \approx -0.35$); burns per DXN give a mean of about zero.
 
 Caveats: synthetic worlds, not forecasts. The fee share of a burn's cost is the biggest unknown, which is why both cases were run. The reserve size (1.2× the fee at deposit-time gas) and the prestige value (10–20% of a lot) are guesses. The game's own extra burns are not included.
 
